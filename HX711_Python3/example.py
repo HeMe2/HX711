@@ -3,6 +3,7 @@ from hx711 import HX711  # import the class HX711
 import RPi.GPIO as GPIO  # import GPIO
 
 try:
+    GPIO.setmode(GPIO.BCM)  # set GPIO pin mode to BCM numbering
     # Create an object hx which represents your real hx711 chip
     # Required input parameters are only 'dout_pin' and 'pd_sck_pin'
     # If you do not pass any argument 'gain_channel_A' then the default value is 128

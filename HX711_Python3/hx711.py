@@ -29,7 +29,6 @@ class HX711:
         self._debug_mode = False  # init debug mode to False
         self._pstdev_filter = True  # pstdev filter is by default ON
 
-        GPIO.setmode(GPIO.BCM)  # set GPIO pin mode to BCM numbering
         GPIO.setup(self._pd_sck, GPIO.OUT)  # pin _pd_sck is output only
         GPIO.setup(self._dout, GPIO.IN)  # pin _dout is input only
         self.select_channel(select_channel)  # call select channel function
