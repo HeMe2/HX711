@@ -362,35 +362,25 @@ class HX711:
         backup_gain = self._gain_channel_A  # backup of gain channel A
         if 0 < times < 100:  # check if times is in required range
             data_list = []  # create empty list
-            while len(data_list) < times:  # read values until the list containts "times" values
+            while len(data_list) < times:  # read values until the list contains "times" values
                 tmp_result = self._read()
                 if type(tmp_result) is int:
                     data_list.append(tmp_result)  # append every read value to the list
             if times > 2 and self._pstdev_filter:  # if times is > 2 filter the data
                 data_pstdev = stat.pstdev(data_list)  # calculate population standard deviation from the data
                 data_mean = stat.mean(data_list)  # calculate mean from the collected data
-                max_num = data_mean + data_pstdev  # calculate max number which is within pstdev
-                min_num = data_mean - data_pstdev  # calculate min number which is within pstdev
-                filtered_data = []  # create new list for filtered data
+
+                if self._debug_mode:
+                    print('data_list: ' + str(data_list))
+                    print('pstdev data: ' + str(data_pstdev))
+                    print('mean data_list: ' + str(stat.mean(data_list)))
 
                 if data_pstdev <= 100:  # is pstdev is less than 100 it is ok
                     self._save_last_raw_data(backup_channel, backup_gain, data_mean)  # save last data
                     return float(data_mean)  # just return the calculated mean
+                else:
+                    return False
 
-                for index, num in enumerate(
-                        data_list):  # now I know that pstdev is greater then iterate through the list
-                    if min_num < num < max_num:  # check if the number is within pstdev
-                        filtered_data.append(num)  # then append to the filtered data list
-                if self._debug_mode:
-                    print('data_list: ' + str(data_list))
-                    print('filtered_data lsit: ' + str(filtered_data))
-                    print('pstdev data: ' + str(data_pstdev))
-                    print('pstdev filtered data: ' + str(stat.pstdev(filtered_data)))
-                    print('mean data_list: ' + str(stat.mean(data_list)))
-                    print('mean filtered_data: ' + str(stat.mean(filtered_data)))
-                f_data_mean = stat.mean(filtered_data)  # calculate mean from filtered data
-                self._save_last_raw_data(backup_channel, backup_gain, f_data_mean)  # save last data
-                return float(f_data_mean)  # return mean from filtered data
             else:
                 data_mean = stat.mean(data_list)  # calculate mean from the list
                 self._save_last_raw_data(backup_channel, backup_gain, data_mean)  # save last data
